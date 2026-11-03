@@ -2,21 +2,16 @@ use std::io::{self, BufRead};
 
 fn main() {
     let stdin = io::stdin();
-    let n: i32 = stdin.lock().lines().next().unwrap().unwrap().trim().parse().unwrap();
-    // TODO: choose between FizzBuzz, Fizz, Buzz and the number itself.
-    let mut state: &str = "";
-    if n % 3 == 0 {
-        if n % 5 == 0 {
-            state = "FizzBuzz";
-        } else {
-            state = "Fizz";
-        }
-    } else if n % 5 == 0 {
-        state = "Buzz";
-    } else {
-        println!("{}", n);
+    let n: i64 = stdin.lock().lines().next().unwrap().unwrap().trim().parse().unwrap();
+
+    // TODO: make `total` an accumulator and use a for loop over a range
+    // so that it ends up holding 1 + 2 + ... + n.
+    let mut total: i64 = 0;
+    let _ = n;
+    
+    for k in 1..=n {
+        total += k;
     }
-    if state != "" {
-        println!("{}", state);
-    }
+
+    println!("{}", total);
 }
