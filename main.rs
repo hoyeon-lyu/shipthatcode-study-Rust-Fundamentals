@@ -1,30 +1,48 @@
-use std::io::{self, Read};
+use std::io::{self, BufRead};
 
-struct Point {
-    x: i32,
-    y: i32,
+enum Shape {
+    Square(i64),
+    Rect(i64, i64),
+    Tri(i64, i64),
 }
 
-impl Point {
-    fn distance_sq(&self, other: &Point) -> i32 {
-        // TODO: return the squared distance between `self` and `other`,
-        // using the fields of both points.
-        return square(other.x - self.x) + square(other.y - self.y)
-    }
-}
-
-fn square(value: i32) -> i32 {
+// Return the area of one shape. Square(side), Rect(width, height),
+// Tri(base, height) for a right triangle, rounded down.
+fn square(value: i64) -> i64{
     return value * value;
 }
 
+fn area(shape: &Shape) -> i64 {
+    // TODO: match on shape and handle every variant.
+    match shape {
+        Shape::Square(side) => square(*side),           //square()함수가 인자로 i64를 받기 때문에 *로 읽을 수 있게 해줘야함.
+        Shape::Rect(width, height) => width * height,   //&i64와 &i64의 곱은 i64를 생성함.
+        Shape::Tri(width, height) => width * height / 2,
+        _ => 0
+    }
+}
+
 fn main() {
-    let mut input = String::new();
-    io::stdin().read_to_string(&mut input).unwrap();
-    let v: Vec<i32> = input
-        .split_whitespace()
-        .map(|s| s.parse().unwrap())
-        .collect();
-    let a = Point { x: v[0], y: v[1] };
-    let b = Point { x: v[2], y: v[3] };
-    println!("{}", a.distance_sq(&b));
+    let stdin = io::stdin();
+    let mut lines = stdin.lock().lines();
+    let n: usize = lines.next().unwrap().unwrap().trim().parse().unwrap();
+    let mut shapes: Vec<Shape> = Vec::new();
+    for _ in 0..n {
+        let line = lines.next().unwrap().unwrap();
+        let parts: Vec<&str> = line.split_whitespace().collect();
+        let a: i64 = parts[1].parse().unwrap();
+        let shape = match parts[0] {
+            "square" => Shape::Square(a),
+            "rect" => Shape::Rect(a, parts[2].parse().unwrap()),
+            _ => Shape::Tri(a, parts[2].parse().unwrap()),
+        };
+        shapes.push(shape);
+    }
+    let mut total: i64 = 0;
+    for s in &shapes {
+        let x = area(s);
+        println!("{}", x);
+        total += x;
+    }
+    println!("total: {}", total);
 }
